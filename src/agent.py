@@ -94,13 +94,28 @@ def execute_sql(sql: str, db_path: Path, limit: int = 100) -> pd.DataFrame:
         return pd.read_sql_query(limited_sql, conn)
 
 
+def dataframe_to_markdown(df: pd.DataFrame) -> str:
+    if df.empty:
+        return "_No rows returned._"
+
+    columns = [str(column) for column in df.columns]
+    lines = [
+        "| " + " | ".join(columns) + " |",
+        "| " + " | ".join("---" for _ in columns) + " |",
+    ]
+    for _, row in df.iterrows():
+        values = [str(row[column]) if pd.notna(row[column]) else "" for column in df.columns]
+        lines.append("| " + " | ".join(values) + " |")
+    return "\n".join(lines)
+
+
 def explain_result(
     question: str, sql: str, data: pd.DataFrame, llm: ChatOpenAI
 ) -> str:
     if data.empty:
         return "SQL 查询成功，但结果为空。建议检查问题条件、赛季范围或关联字段。"
 
-    sample = data.head(20).to_markdown(index=False)
+    sample = dataframe_to_markdown(data.head(20))
     system = SystemMessage(
         content=(
             "你是一个篮球数据分析助手。"

@@ -67,7 +67,7 @@ def render_dashboard_charts() -> None:
                 st.warning(f"无法加载图表数据：{exc}")
                 continue
 
-            st.dataframe(df, use_container_width=True)
+            st.dataframe(df, width="stretch")
             if title == "赛季场均总得分趋势":
                 fig = px.line(
                     df,
@@ -93,7 +93,7 @@ def render_dashboard_charts() -> None:
                     markers=True,
                     labels={"season": "赛季", "home_win_rate": "主队胜率(%)"},
                 )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
 
 
 def render_dynamic_chart(question: str, df: pd.DataFrame) -> None:
@@ -113,7 +113,7 @@ def render_dynamic_chart(question: str, df: pd.DataFrame) -> None:
         fig = px.line(df, x=df.columns[0], y=y_column, markers=True)
     else:
         fig = px.bar(df, x=x_column, y=y_column)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
 
 def main() -> None:
@@ -131,7 +131,7 @@ def main() -> None:
 
         st.header("示例问题")
         for index, question in enumerate(SAMPLE_QUESTIONS):
-            if st.button(question, key=f"sample_{index}", use_container_width=True):
+            if st.button(question, key=f"sample_{index}", width="stretch"):
                 st.session_state["question"] = question
 
     if "question" not in st.session_state:
@@ -153,7 +153,7 @@ def main() -> None:
                 st.code(result.sql, language="sql")
 
                 st.subheader("SQL 查询结果")
-                st.dataframe(result.data, use_container_width=True)
+                st.dataframe(result.data, width="stretch")
 
                 st.subheader("智能体分析结论")
                 st.write(result.analysis)
